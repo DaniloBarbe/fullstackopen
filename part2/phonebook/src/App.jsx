@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import personsService from './services/persons' 
+import Notification from './components/Notification'
+
 const List = ({name,number,id,deleteName}) =>{
   return(
     <div>
@@ -19,10 +21,11 @@ const Filter = ({showName,handleFilterChange}) => {
   )
 }
 
-const PersonForm = ({addName,newName,newNumber,handleNameChange,handleNumberChange}) =>{
+const PersonForm = ({showNotfication,addName,newName,newNumber,handleNameChange,handleNumberChange}) =>{
   return(
     <div>
           <h2>Add a new</h2>
+          < Notification message={showNotfication?.message} estate={showNotfication?.estate}/>
       <form onSubmit={addName}>
         <div>
           name: <input value={newName} onChange={handleNameChange}/>
@@ -54,6 +57,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [showName, setShowName] = useState('')
+  const [showNotfication,setShowNotification] = useState(null)
 
   useEffect(() =>{
     personsService.getAll()
@@ -77,14 +81,40 @@ const App = () => {
         .then(response => {
           setPersons(persons.map(person => person.id === response.data.id? response.data : person))
           setNewName('')
-          setNewNumber('')
+          setNewNumber('')  
+          
+          setShowNotification({
+            message : `Addded ${newName}`,
+            estate : "success"})
+          setTimeout(() => {
+            setShowNotification(null)
+          }, 2000)
+          
         })
+         .catch(() => {
+        setShowNotification({
+          message : `This contact has already been deleted and can no longer be updated.`,
+          estate : "error"})
+          setPersons(persons.filter(person => person.id !== resultado.id))
+        setTimeout(()=> {
+          setShowNotification(null)
+        }, 2000)
+
+      }) 
       }
     }else{ personsService.create(personObject)
       .then(response => { 
-      setPersons(persons.concat(response.data))
-      setNewName('')
-      setNewNumber('')
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('') 
+
+        setShowNotification({
+            message : `Addded ${newName}`,
+            estate : "success"})
+          setTimeout(() => {
+            setShowNotification(null)
+          }, 2000)
+        
       })
     }}
 
@@ -94,6 +124,15 @@ const App = () => {
       .then(()=> {
         setPersons(persons.filter(person => person.id !== id))
       })
+      .catch(() => {
+        setShowNotification({
+          message : `This contact has already been deleted and can no longer be updated.`,
+          estate : "error"})
+        setTimeout(()=> {
+          setShowNotification(null)
+        }, 2000)
+         setPersons(persons.filter(person => person.id !== id))
+      })  
     }  
   }
 
@@ -117,9 +156,9 @@ const App = () => {
     <div>
 
       <Filter showName={showName} handleFilterChange={handleFilterChange} />
-      <PersonForm addName={addName}newName={newName}
+      <PersonForm showNotfication={showNotfication}addName={addName}newName={newName}
       newNumber={newNumber}handleNameChange={handleNameChange}
-      handleNumberChange={handleNumberChange}/>
+      handleNumberChange={handleNumberChange} />
       <Person personsToShow={personsToShow} deleteName={deleteName}/>
     </div>
   )
