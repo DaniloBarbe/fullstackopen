@@ -6,4 +6,4 @@ Repositório com as minhas soluções e projetos do curso Full Stack Open da Uni
 
 Aplicação publicada no Render:
 
-https://SEU-SERVICO.onrender.com
+https://fullstackopen-kxmb.onrender.com/
