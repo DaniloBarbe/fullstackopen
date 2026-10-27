@@ -116,8 +116,17 @@ const App = () => {
           }, 2000)
         
       })
-    }}
-
+       .catch(error => {
+        setShowNotification({
+          message : error.response?.data?.error || 'Error adding contact',
+          estate : "error"})
+          
+        setTimeout(()=> {
+          setShowNotification(null)
+        }, 2000)
+    })
+  }
+  }
   const deleteName = (id) =>{
     if(window.confirm('Tem certeza?')){
       personsService.deletePerson(id)
