@@ -1,7 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
-require('dontenv').conf()
-const password = process.env.MONGODB_PASSWORD
+require('dotenv').config()
+
 const app = express()
 
 const blogSchema = mongoose.Schema({
@@ -13,7 +13,7 @@ const blogSchema = mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema)
 
-const mongoUrl = `mongodb+srv://danilobarbe4_db_user:${password}@fullstackopen.8ph8xln.mongodb.net/`
+const mongoUrl = process.env.MONGODB_URI
 
 mongoose.connect(mongoUrl, { family: 4 })
 
